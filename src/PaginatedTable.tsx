@@ -8,9 +8,8 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
-  type SortingState,
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
@@ -29,7 +28,10 @@ const queryClient = new QueryClient();
 
 function Table() {
   const tableQWueryClient = useQueryClient(queryClient);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15,
+  });
   const {
     data: fetchedData,
     isError,
@@ -59,7 +61,6 @@ function Table() {
       columnHelper.accessor('id', {
         header: () => 'ID',
         cell: (info) => info.getValue(),
-        enableSorting: false,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('first_name', {
@@ -95,7 +96,6 @@ function Table() {
       columnHelper.accessor('phone', {
         header: () => 'Phone',
         cell: (info) => info.getValue(),
-        enableSorting: false,
         footer: (info) => info.column.id,
       }),
     ],
@@ -105,86 +105,89 @@ function Table() {
     data: fetchedData ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
-      sorting,
+      pagination,
     },
   });
 
-  // console.log(table.getState().sorting);
-
   return (
-    <div className="flex justify-center max-w-5/6 m-auto mt-12">
+    <div className="flex flex-col justify-center max-w-5/6 m-auto mt-12">
       {isError && <div className="text-red-600">{error?.message}</div>}
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
-        <table className="min-w-full">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-gray-300">
-                {headerGroup.headers.map((header) => {
-                  return (
+        <>
+          <table className="min-w-full">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id} className="border-b border-gray-300">
+                  {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      colSpan={header.colSpan}
-                      className="whitespace-nowrap py-3.5 px-2 text-sm font-semibold text-left"
+                      className="whitespace-nowrap py-3.5 px-2 text-sm font-semibold text-left cursor-pointer select-none"
                     >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={
-                            header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
-                              : ''
-                          }
-                          onClick={header.column.getToggleSortingHandler()}
-                          title={
-                            header.column.getCanSort()
-                              ? header.column.getNextSortingOrder() === 'asc'
-                                ? 'Sort ascending'
-                                : header.column.getNextSortingOrder() === 'desc'
-                                  ? 'Sort descending'
-                                  : 'Clear sort'
-                              : undefined
-                          }
-                        >
-                          {flexRender(
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
-                          {{
-                            asc: ' ↑',
-                            desc: ' ↓',
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                      )}
                     </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b border-gray-200">
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className="whitespace-nowrap p-2 text-sm font-light"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="border-b border-gray-200">
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="whitespace-nowrap p-2 text-sm font-light"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="flex justify-center mt-4">
+            <button
+              type="button"
+              className="py-2 px-3 pl-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+            >
+              ‹‹
+            </button>
+            <button
+              type="button"
+              className="py-2 px-3 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className="py-2 px-3 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+            >
+              ›
+            </button>
+            <button
+              type="button"
+              className="py-2 px-3 pr-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+            >
+              ››
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
 }
 
-export default function SortingTable() {
+export default function PaginatedTable() {
   return (
     <QueryClientProvider client={queryClient}>
       <Table />
