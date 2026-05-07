@@ -115,11 +115,11 @@ function Table() {
   // console.log(table.getState().sorting);
 
   return (
-    <div className="flex justify-center max-w-5/6 m-auto mt-12">
+    <div className="flex flex-col items-center justify-center max-w-5/6 m-auto mt-12">
       {isError && <div className="text-red-600">{error?.message}</div>}
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
-        <table className="min-w-full">
+        <table className="table-fixed w-4/5">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b border-gray-300">
@@ -128,7 +128,7 @@ function Table() {
                     <th
                       key={header.id}
                       colSpan={header.colSpan}
-                      className="whitespace-nowrap py-3.5 px-2 text-sm font-semibold text-left"
+                      className="whitespace-nowrap py-3.5 px-2 text-sm font-semibold text-left overflow-hidden"
                     >
                       {header.isPlaceholder ? null : (
                         <div
@@ -170,7 +170,7 @@ function Table() {
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="whitespace-nowrap p-2 text-sm font-light"
+                    className="whitespace-nowrap p-2 text-sm font-light overflow-hidden"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
