@@ -28,10 +28,6 @@ const queryClient = new QueryClient();
 
 function Table() {
   const tableQWueryClient = useQueryClient(queryClient);
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 15,
-  });
   const {
     data: fetchedData,
     isError,
@@ -106,8 +102,11 @@ function Table() {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    state: {
-      pagination,
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 15,
+      },
     },
   });
 
@@ -158,25 +157,33 @@ function Table() {
           <div className="flex justify-center mt-4">
             <button
               type="button"
-              className="py-2 px-3 pl-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              className="py-1 px-3 pl-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-lg font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
             >
               ‹‹
             </button>
             <button
               type="button"
-              className="py-2 px-3 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              className="py-1 px-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-lg font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
             >
               ‹
             </button>
             <button
               type="button"
-              className="py-2 px-3 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              className="py-1 px-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-lg font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
             >
               ›
             </button>
             <button
               type="button"
-              className="py-2 px-3 pr-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-md font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              className="py-1 px-3 pr-6 gap-2 -ms-px first:rounded-s-full first:ms-0 last:rounded-e-full text-lg font-medium bg-gray-100 hover:z-10 border border-gray-200 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none hover:border-gray-300"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
             >
               ››
             </button>
