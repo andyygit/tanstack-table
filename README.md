@@ -1,3 +1,5 @@
+# React Tables project using @tanstack/react-table
+
 ## Basic Vite project
 
 Created with npm create vite@latest .
