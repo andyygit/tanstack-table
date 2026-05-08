@@ -126,17 +126,31 @@ function Table() {
                     key={header.id}
                     className="whitespace-nowrap py-3.5 px-2 text-sm font-semibold text-left cursor-pointer select-none overflow-hidden"
                   >
-                    <div>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                    <div className="flex justify-between">
+                      <div>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </div>
+                      {header.column.getCanFilter() ? (
+                        <button
+                          onClick={(e) => {
+                            (
+                              (e.target as HTMLButtonElement).parentElement
+                                ?.nextSibling as HTMLInputElement
+                            ).classList.toggle('hidden');
+                          }}
+                        >
+                          &#128269;
+                        </button>
+                      ) : null}
                     </div>
                     {header.column.getCanFilter() ? (
                       <input
-                        className="border w-full"
+                        className="border w-full hidden"
                         value={
                           (header.column.getFilterValue() as string | number) ||
                           ''

@@ -4,13 +4,15 @@ import './index.css';
 // import BasicTable from './BasicTable.tsx';
 // import SortingTable from './SortingTable.tsx';
 // import PaginatedTable from './PaginatedTable.tsx';
-import FilteredTable from './FilteredTable.tsx';
+// import FilteredTable from './FilteredTable.tsx';
+import FullTable from './FullTable.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* <BasicTable /> */}
     {/* <SortingTable /> */}
     {/* <PaginatedTable /> */}
-    <FilteredTable />
+    {/* <FilteredTable /> */}
+    <FullTable />
   </StrictMode>,
 );
